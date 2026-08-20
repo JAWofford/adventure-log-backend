@@ -1,11 +1,14 @@
 package com.jwofford.adventure_log_backend.services;
 
+import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
+import com.jwofford.adventure_log_backend.dtos.UserResponseDto;
 import com.jwofford.adventure_log_backend.exceptions.DuplicateUserInfoException;
 import com.jwofford.adventure_log_backend.models.User;
 import com.jwofford.adventure_log_backend.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -13,11 +16,16 @@ public class UserService {
 
 
     private final UserRepository userRepository;
-    public UserService(UserRepository userRepository) {
+
+    //See SecurityConfig for type of encoder used.
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public UserDto registerNewUser (User user){
+    public UserResponseDto registerNewUser (UserRegistrationDto user){
 
         //Does a user with that username already exist?
        Optional<User> existingUser = userRepository.findByUserName(user.getUserName());
@@ -29,11 +37,22 @@ public class UserService {
         if (existingEmail.isPresent()) {
             throw new DuplicateUserInfoException(DuplicateUserInfoException.DuplicateField.EMAIL);
         }
+        //If both checks pass, hash the raw password
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
 
-        //If both checks pass, hash the raw password (BCrypt?)
         //Build a user object with the hashed password and set createdAt
+        User newUser = new User();
+        newUser.setUserName(user.getUserName());
+        newUser.setDisplayName(user.getDisplayName());
+        newUser.setEmail(user.getEmail());
+        newUser.setPasswordHash(hashedPassword);
+        newUser.setCreatedAt(LocalDateTime.now());
+
         //Save via the repository.
-        //Return something.  The full User? Just the name?
+        User savedUser = userRepository.save(newUser);
+
+        //Build and return a UserResponseDto with the saved user info (excluding passwordHash)
+        return new UserResponseDto(savedUser.getId(), savedUser.getDisplayName());
     }
 
 }
