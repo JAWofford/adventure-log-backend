@@ -30,12 +30,12 @@ public class UserService {
         //Does a user with that username already exist?
        Optional<User> existingUser = userRepository.findByUserName(user.getUserName());
        if (existingUser.isPresent()) {
-            throw new DuplicateUserInfoException(DuplicateUserInfoException.DuplicateField.USERNAME);
+            throw new DuplicateUserInfoException("username", user.getUserName());
         }
         //Does a user with that email already exist?
         Optional<User> existingEmail = userRepository.findByEmail(user.getEmail());
         if (existingEmail.isPresent()) {
-            throw new DuplicateUserInfoException(DuplicateUserInfoException.DuplicateField.EMAIL);
+            throw new DuplicateUserInfoException("email", user.getEmail());
         }
         //If both checks pass, hash the raw password
         String hashedPassword = passwordEncoder.encode(user.getPassword());
