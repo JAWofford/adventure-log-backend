@@ -23,13 +23,6 @@ public class UserRegistrationDto {
     public UserRegistrationDto() {
     }
 
-    public UserRegistrationDto(String userName, String displayName, String email, String password) {
-        this.userName = userName;
-        this.displayName = displayName;
-        this.email = email;
-        this.password = password;
-    }
-
     public String getUserName() {
         return userName;
     }

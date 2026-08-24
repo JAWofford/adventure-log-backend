@@ -1,14 +1,15 @@
 package com.jwofford.adventure_log_backend.dtos;
 
-public class UserResponseDto {
+public class AuthResponseDto {
 
     private long id;
     private String displayName;
+    private String token;
 
-    public UserResponseDto() {
+    public AuthResponseDto() {
     }
 
-    public UserResponseDto(long id, String displayName) {
+    public AuthResponseDto(long id, String displayName) {
         this.id = id;
         this.displayName = displayName;
     }
@@ -27,5 +28,13 @@ public class UserResponseDto {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

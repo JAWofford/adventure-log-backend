@@ -2,7 +2,7 @@ package com.jwofford.adventure_log_backend.controllers;
 
 
 import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
-import com.jwofford.adventure_log_backend.dtos.UserResponseDto;
+import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -24,9 +24,9 @@ public class UserController {
 
     @PostMapping("/auth/register")
     //use response entity to return 201 "created" status code.
-    public ResponseEntity<UserResponseDto> registerUser(@Valid @RequestBody UserRegistrationDto newUserRequest) {
-       UserResponseDto userResponseDto = userService.registerNewUser(newUserRequest);
-       return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+    public ResponseEntity<AuthResponseDto> registerUser(@Valid @RequestBody UserRegistrationDto newUserRequest) {
+       AuthResponseDto authResponseDto = userService.registerNewUser(newUserRequest);
+       return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
 
     }
 

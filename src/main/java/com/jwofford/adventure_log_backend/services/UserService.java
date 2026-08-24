@@ -1,7 +1,7 @@
 package com.jwofford.adventure_log_backend.services;
 
 import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
-import com.jwofford.adventure_log_backend.dtos.UserResponseDto;
+import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.exceptions.DuplicateUserInfoException;
 import com.jwofford.adventure_log_backend.models.User;
 import com.jwofford.adventure_log_backend.repositories.UserRepository;
@@ -25,17 +25,17 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserResponseDto registerNewUser (UserRegistrationDto user){
+    public AuthResponseDto registerNewUser (UserRegistrationDto user){
 
         //Does a user with that username already exist?
        Optional<User> existingUser = userRepository.findByUserName(user.getUserName());
        if (existingUser.isPresent()) {
-            throw new DuplicateUserInfoException("username", user.getUserName());
+            throw new DuplicateUserInfoException(DuplicateUserInfoException.DuplicateField.USERNAME);
         }
         //Does a user with that email already exist?
         Optional<User> existingEmail = userRepository.findByEmail(user.getEmail());
         if (existingEmail.isPresent()) {
-            throw new DuplicateUserInfoException("email", user.getEmail());
+            throw new DuplicateUserInfoException(DuplicateUserInfoException.DuplicateField.EMAIL);
         }
         //If both checks pass, hash the raw password
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -52,7 +52,7 @@ public class UserService {
         User savedUser = userRepository.save(newUser);
 
         //Build and return a UserResponseDto with the saved user info (excluding passwordHash)
-        return new UserResponseDto(savedUser.getId(), savedUser.getDisplayName());
+        return new AuthResponseDto(savedUser.getId(), savedUser.getDisplayName());
     }
 
 }
