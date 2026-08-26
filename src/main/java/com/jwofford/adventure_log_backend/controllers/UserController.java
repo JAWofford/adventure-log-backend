@@ -1,17 +1,23 @@
 package com.jwofford.adventure_log_backend.controllers;
 
 
+import com.jwofford.adventure_log_backend.dtos.UserLoginDto;
 import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
 import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.services.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -19,6 +25,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private SecurityContextRepository securityContextRepository;
 
     @PostMapping("/auth/register")
     //use response entity to return 201 "created" status code.
@@ -28,4 +40,46 @@ public class UserController {
 
     }
 
-}
+    @PostMapping("/auth/login")
+    //Receive the username and password from React and ask Spring Security to authenticate them
+    public ResponseEntity<AuthResponseDto> login(
+            @Valid @RequestBody UserLoginDto loginRequest,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        //package the credentials in the Authentication object Spring Expects. Implementation of Authentication interface
+        UsernamePasswordAuthenticationToken authenticationToken =
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUserName(),
+                        loginRequest.getPassword()
+                );
+
+        //Spring Security finds the user,checks the password, and either authenticates or rejects the login
+        Authentication authentication =
+                authenticationManager.authenticate(authenticationToken);
+
+        // Create a place to store information about the user who was just authenticated
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+
+        //put the authenticated user into "context"
+        context.setAuthentication(authentication);
+
+        // Tell Spring Security that this is the authenticated user for the current request
+        SecurityContextHolder.setContext(context);
+
+        //Save the authentication in teh HTTP session so Spring Security can recognize this user on future requests
+        securityContextRepository.saveContext(context, request, response);
+
+        //Put together the information about our user that React needs.
+        AuthResponseDto authResponseDto = userService.getAuthResponse(authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
+    }
+
+    @GetMapping("/whoami")
+        public String whoami() {
+         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+        }
+    }
+
+

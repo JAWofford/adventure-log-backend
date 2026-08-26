@@ -15,10 +15,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    //fulfill interface "contract" with UserDetailsService - one method
     public UserDetails loadUserByUsername(String username){
         //look for user in database
-        //if user exists, create a UserDetails object because that's what this method returns
+        //if user exists, create a UserDetails object with info Spring Security needs for authentication
         //if not throw Spring Security exception as defined by interface.
         //build UserDetails object to return using Spring's User object builder.
         User user = userRepository.findByUserName(username).orElseThrow(()-> new UsernameNotFoundException("User not found:" + username)); //this is the adventurelog User object

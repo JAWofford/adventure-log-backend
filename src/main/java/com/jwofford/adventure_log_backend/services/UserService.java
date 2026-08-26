@@ -1,11 +1,13 @@
 package com.jwofford.adventure_log_backend.services;
 
+import com.jwofford.adventure_log_backend.dtos.UserLoginDto;
 import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
 import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.exceptions.DuplicateUserInfoException;
 import com.jwofford.adventure_log_backend.models.User;
 import com.jwofford.adventure_log_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,11 @@ public class UserService {
 
         //Build and return a UserResponseDto with the saved user info (excluding passwordHash)
         return new AuthResponseDto(savedUser.getId(), savedUser.getDisplayName());
+    }
+
+    public AuthResponseDto getAuthResponse (String userName){
+        User authUser = userRepository.findByUserName(userName).orElseThrow(()-> new UsernameNotFoundException("User not found:" + userName));
+        return new AuthResponseDto(authUser.getId(), authUser.getDisplayName());
     }
 
 }
