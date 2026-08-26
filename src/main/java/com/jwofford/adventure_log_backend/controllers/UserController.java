@@ -5,6 +5,7 @@ import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
 import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api")
 public class UserController {
 
-    //constructor dependency injection
-    private final UserService userService;
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/auth/register")
     //use response entity to return 201 "created" status code.

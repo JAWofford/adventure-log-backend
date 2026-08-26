@@ -5,6 +5,7 @@ import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.exceptions.DuplicateUserInfoException;
 import com.jwofford.adventure_log_backend.models.User;
 import com.jwofford.adventure_log_backend.repositories.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,16 +15,14 @@ import java.util.Optional;
 @Service
 public class UserService {
 
-
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     //See SecurityConfig for type of encoder used.
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+
 
     public AuthResponseDto registerNewUser (UserRegistrationDto user){
 
