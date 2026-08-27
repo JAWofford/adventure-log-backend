@@ -75,7 +75,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
     }
 
-    @GetMapping("/whoami")
+    @PostMapping("/whoami")
         public String whoami() {
          Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
