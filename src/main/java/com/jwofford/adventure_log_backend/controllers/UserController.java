@@ -32,27 +32,15 @@ public class UserController {
     @Autowired
     private SecurityContextRepository securityContextRepository;
 
-    @PostMapping("/auth/register")
-    //use response entity to return 201 "created" status code.
-    public ResponseEntity<AuthResponseDto> registerUser(@Valid @RequestBody UserRegistrationDto newUserRequest) {
-       AuthResponseDto authResponseDto = userService.registerNewUser(newUserRequest);
-       return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
-
-    }
-
-    @PostMapping("/auth/login")
-    //Receive the username and password from React and ask Spring Security to authenticate them
-    public ResponseEntity<AuthResponseDto> login(
-            @Valid @RequestBody UserLoginDto loginRequest,
+    //helper function
+    private Authentication establishSession(
+            String username,
+            String password,
             HttpServletRequest request,
             HttpServletResponse response) {
-
         //package the credentials in the Authentication object Spring Expects. Implementation of Authentication interface
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUserName(),
-                        loginRequest.getPassword()
-                );
+                new UsernamePasswordAuthenticationToken(username, password);
 
         //Spring Security finds the user,checks the password, and either authenticates or rejects the login
         Authentication authentication =
@@ -67,8 +55,35 @@ public class UserController {
         // Tell Spring Security that this is the authenticated user for the current request
         SecurityContextHolder.setContext(context);
 
-        //Save the authentication in teh HTTP session so Spring Security can recognize this user on future requests
+        //Save the authentication in the HTTP session so Spring Security can recognize this user on future requests
         securityContextRepository.saveContext(context, request, response);
+
+        return  authentication;
+    }
+
+    @PostMapping("/auth/register")
+    //use response entity to return 201 "created" status code.
+    public ResponseEntity<AuthResponseDto> registerUser(
+            @Valid @RequestBody UserRegistrationDto newUserRequest,
+            HttpServletRequest request,
+            HttpServletResponse response
+            ) {
+       AuthResponseDto authResponseDto = userService.registerNewUser(newUserRequest);
+
+       establishSession(newUserRequest.getUserName(), newUserRequest.getPassword(), request, response);
+
+       return ResponseEntity.status(HttpStatus.CREATED).body(authResponseDto);
+
+    }
+
+    @PostMapping("/auth/login")
+    //Receive the username and password from React and ask Spring Security to authenticate them
+    public ResponseEntity<AuthResponseDto> login(
+            @Valid @RequestBody UserLoginDto loginRequest,
+            HttpServletRequest request,
+            HttpServletResponse response) {
+
+        Authentication authentication = establishSession(loginRequest.getUserName(), loginRequest.getPassword(), request, response);
 
         //Put together the information about our user that React needs.
         AuthResponseDto authResponseDto = userService.getAuthResponse(authentication.getName());
