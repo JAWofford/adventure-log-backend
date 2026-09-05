@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -25,6 +27,10 @@ public class User {
     private String passwordHash;
 
     private LocalDateTime createdAt;
+
+    //set up relationship one user can have many trip logs.
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private List<TripLog> tripLogList = new ArrayList<>();
 
     public User() {
     }
@@ -71,5 +77,13 @@ public class User {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public List<TripLog> getTripLogList() {
+        return tripLogList;
+    }
+
+    public void setTripLogList(List<TripLog> tripLogList) {
+        this.tripLogList = tripLogList;
     }
 }

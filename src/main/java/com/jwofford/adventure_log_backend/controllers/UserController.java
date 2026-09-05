@@ -7,6 +7,7 @@ import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -88,6 +89,18 @@ public class UserController {
         //Put together the information about our user that React needs.
         AuthResponseDto authResponseDto = userService.getAuthResponse(authentication.getName());
         return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
+    }
+
+    @PostMapping("/auth/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        //check to see if a session was retrieved before invalidating
+        if(session != null) {
+            session.invalidate();
+        }
+        //clear auth info in Spring Security
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/whoami")
