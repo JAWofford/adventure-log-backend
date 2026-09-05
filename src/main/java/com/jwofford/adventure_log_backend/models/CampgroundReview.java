@@ -20,6 +20,11 @@ public class CampgroundReview {
     @Column(nullable = false)
     private String campgroundName;
 
+    private String location;
+
+    @Column(nullable = false)
+    private String state;
+
     private String campgroundNotes;
 
     @Column(nullable = false)
@@ -70,5 +75,21 @@ public class CampgroundReview {
 
     public void setReviewStayList(List<ReviewStay> reviewStayList) {
         this.reviewStayList = reviewStayList;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
     }
 }

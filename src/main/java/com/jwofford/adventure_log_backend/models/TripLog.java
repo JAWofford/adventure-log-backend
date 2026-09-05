@@ -21,6 +21,7 @@ public class TripLog {
     @Column(nullable = false)
     private String tripName;
     private String tripDescription;
+    @Column(nullable = false)
     private LocalDate startDate;
     private LocalDate endDate;
 
