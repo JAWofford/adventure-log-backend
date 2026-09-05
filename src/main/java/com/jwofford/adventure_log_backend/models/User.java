@@ -32,6 +32,10 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
     private List<TripLog> tripLogList = new ArrayList<>();
 
+    //set up relationship one user can have many campground reviews.
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", orphanRemoval = true)
+    private List<CampgroundReview> campgroundReviewList = new ArrayList<>();
+
     public User() {
     }
 
@@ -85,5 +89,13 @@ public class User {
 
     public void setTripLogList(List<TripLog> tripLogList) {
         this.tripLogList = tripLogList;
+    }
+
+    public List<CampgroundReview> getCampgroundReviewList() {
+        return campgroundReviewList;
+    }
+
+    public void setCampgroundReviewList(List<CampgroundReview> campgroundReviewList) {
+        this.campgroundReviewList = campgroundReviewList;
     }
 }
