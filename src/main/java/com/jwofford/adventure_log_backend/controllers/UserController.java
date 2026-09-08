@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -103,11 +104,11 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/whoami")
-        public String whoami() {
-         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
-        }
+    @GetMapping("/csrf")
+    public ResponseEntity<String> getCsrfToken(CsrfToken csrfToken) {
+        return ResponseEntity.ok(csrfToken.getToken());
     }
+
+}
 
 

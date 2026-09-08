@@ -6,6 +6,7 @@ import com.jwofford.adventure_log_backend.dtos.TripLogResponseDto;
 import com.jwofford.adventure_log_backend.models.User;
 import com.jwofford.adventure_log_backend.repositories.UserRepository;
 import com.jwofford.adventure_log_backend.services.TripLogService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -17,29 +18,23 @@ import java.util.List;
 @RequestMapping("api/triplogs")
 public class TripLogController {
 
-    private final TripLogService tripLogService;
-    private final UserRepository userRepository;
+    @Autowired
+    private TripLogService tripLogService;
 
-    public TripLogController(TripLogService tripLogService, UserRepository userRepository) {
-        this.tripLogService = tripLogService;
-        this.userRepository = userRepository;
-    }
-
-    // shared helper: every endpoint needs the actual User entity,
-    // but Authentication only gives us a username
-    private User getCurrentUser(Authentication authentication) {
-        String username = authentication.getName();
-        return userRepository.findByUserName(username)
-                .orElseThrow(() -> new IllegalStateException("Authenticated user not found in database"));
-    }
+    @Autowired
+    private UserRepository userRepository;
 
     @PostMapping
+    //use response entity to return 201 "created" status code.
     public ResponseEntity<TripLogResponseDto> createTripLog(
+            //get and deserialize incoming JSON into request DTO
             @RequestBody TripLogRequestDto dto,
             Authentication authentication) {
+        //use helper method.
         User currentUser = getCurrentUser(authentication);
-        TripLogResponseDto created = tripLogService.createTripLog(dto, currentUser);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        //put together info to send back to front end.
+        TripLogResponseDto createdLog = tripLogService.createTripLog(dto, currentUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdLog);
     }
 
     @GetMapping
@@ -85,6 +80,18 @@ public class TripLogController {
         User currentUser = getCurrentUser(authentication);
         TripLogResponseDto updated = tripLogService.addRouteLeg(tripId, dto, currentUser.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(updated);
+    }
+
+    // helper method: get the full the adventure log User entity,
+    // since Authentication only provide a username.
+    private User getCurrentUser(Authentication authentication) {
+        //get username string from authentication object
+        String username = authentication.getName();
+
+        return userRepository.findByUserName(username)
+                //exception to handle Optional. This should never happen since user is authenticated
+                //so let error bubble up.
+                .orElseThrow(() -> new IllegalStateException("Authenticated user not found in database"));
     }
 
 }
