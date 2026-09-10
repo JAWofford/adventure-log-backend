@@ -1,6 +1,5 @@
 package com.jwofford.adventure_log_backend.services;
 
-import com.jwofford.adventure_log_backend.dtos.UserLoginDto;
 import com.jwofford.adventure_log_backend.dtos.UserRegistrationDto;
 import com.jwofford.adventure_log_backend.dtos.AuthResponseDto;
 import com.jwofford.adventure_log_backend.exceptions.DuplicateUserInfoException;
@@ -56,7 +55,7 @@ public class UserService {
         return new AuthResponseDto(savedUser.getId(), savedUser.getDisplayName());
     }
 
-    public AuthResponseDto getAuthResponse (String userName){
+        public AuthResponseDto getAuthResponse (String userName){
         User authUser = userRepository.findByUserName(userName).orElseThrow(()-> new UsernameNotFoundException("User not found:" + userName));
         return new AuthResponseDto(authUser.getId(), authUser.getDisplayName());
     }
