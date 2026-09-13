@@ -21,6 +21,7 @@ public class RouteLeg {
     @Column(nullable = false)
     private String legTitle;
 
+    @Column(columnDefinition = "TEXT")
     private String legNotes;
 
     public RouteLeg() {

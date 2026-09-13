@@ -37,7 +37,7 @@ public class TripLogController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdLog);
     }
 
-    @GetMapping
+    @GetMapping("/user")
     public ResponseEntity<List<TripLogResponseDto>> getAllTripLogsForUser(Authentication authentication) {
         User currentUser = getCurrentUser(authentication);
         List<TripLogResponseDto> tripLogs = tripLogService.getAllTripLogsForUser(currentUser.getId());

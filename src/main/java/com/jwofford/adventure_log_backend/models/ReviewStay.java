@@ -19,6 +19,7 @@ public class ReviewStay {
 
     private LocalDate dateStayed;
     private String siteNumber;
+    @Column(columnDefinition = "TEXT")
     private String stayNotes;
 
     public ReviewStay() {

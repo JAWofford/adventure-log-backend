@@ -24,7 +24,7 @@ public class CampgroundReview {
 
     @Column(nullable = false)
     private String state;
-
+    @Column(columnDefinition = "TEXT")
     private String campgroundNotes;
 
     @Column(nullable = false)

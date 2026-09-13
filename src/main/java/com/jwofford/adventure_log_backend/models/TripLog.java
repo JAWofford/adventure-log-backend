@@ -20,6 +20,7 @@ public class TripLog {
 
     @Column(nullable = false)
     private String tripName;
+    @Column(columnDefinition = "TEXT")
     private String tripDescription;
     private LocalDate startDate;
     private LocalDate endDate;
