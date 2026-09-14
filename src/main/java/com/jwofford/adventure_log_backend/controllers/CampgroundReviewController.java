@@ -36,7 +36,7 @@ public class CampgroundReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdReview);
     }
 
-    @GetMapping()
+    @GetMapping("/user")
     public ResponseEntity<List<CampgroundReviewResponseDto>> getAllCampgroundReviewsForUser(Authentication authentication) {
         User currentUser = getCurrentUser(authentication);
         List<CampgroundReviewResponseDto> reviews = reviewService.getAllCampgroundReviewsForUser(currentUser.getId());

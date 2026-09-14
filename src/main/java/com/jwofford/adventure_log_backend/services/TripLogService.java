@@ -100,6 +100,27 @@ public class TripLogService {
         return mapToResponseDto(savedLog);
     }
 
+    public TripLogResponseDto updateRouteLeg(long tripId, long legId, RouteLegRequestDto dto, long currentUserId) {
+        TripLog tripLog = tripLogRepository.findById(tripId)
+                .orElseThrow(() -> new TripLogNotFoundException("Trip log not found"));
+
+        checkOwnership(tripLog, currentUserId);
+
+        RouteLeg currentLeg = tripLog.getRouteLegList().stream()
+                .filter(leg -> leg.getLegId() == legId)
+                .findFirst()
+                .orElseThrow(()-> new TripLogNotFoundException("Route leg not found"));
+
+        //saving changes to RouteLeg object in TripLog.
+        currentLeg.setLegTitle(dto.getLegTitle());
+        currentLeg.setLegNotes(dto.getLegNotes());
+
+        // saving the parent is enough cascade handles the updated RouteLeg too
+        TripLog savedLog = tripLogRepository.save(tripLog);
+        return mapToResponseDto(savedLog);
+    }
+
+
     // helper: confirm the trip actually belongs to the requesting user
     private void checkOwnership(TripLog tripLog, long currentUserId) {
         if (tripLog.getUser().getId() != currentUserId) {

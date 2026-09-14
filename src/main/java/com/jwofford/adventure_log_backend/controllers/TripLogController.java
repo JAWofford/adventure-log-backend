@@ -71,7 +71,7 @@ public class TripLogController {
         tripLogService.deleteTripLog(tripId, currentUser.getId());
         return ResponseEntity.noContent().build();
     }
-
+//---------LEGS----------------------------------------
     @PostMapping("/{tripId}/legs")
     public ResponseEntity<TripLogResponseDto> addRouteLeg(
             @PathVariable long tripId,
@@ -80,6 +80,17 @@ public class TripLogController {
         User currentUser = getCurrentUser(authentication);
         TripLogResponseDto updated = tripLogService.addRouteLeg(tripId, dto, currentUser.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(updated);
+    }
+
+    @PutMapping("/{tripId}/legs/{legId}")
+    public ResponseEntity<TripLogResponseDto> updateRouteLeg(
+            @PathVariable long tripId,
+            @PathVariable long legId,
+            @RequestBody RouteLegRequestDto dto,
+            Authentication authentication) {
+        User currentUser = getCurrentUser(authentication);
+        TripLogResponseDto updated = tripLogService.updateRouteLeg(tripId, legId, dto, currentUser.getId());
+        return ResponseEntity.ok(updated);
     }
 
     // helper method: get the full the adventure log User entity,
