@@ -31,10 +31,15 @@ public class CampgroundReview {
     private String privacy;
 
     //set up relationship one review can have many stays
+    @OrderBy("stayId ASC")
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "campgroundReview", orphanRemoval = true)
     private List<ReviewStay> reviewStayList = new ArrayList<>();
 
     public CampgroundReview() {
+    }
+
+    public long getCampgroundId() {
+        return campgroundId;
     }
 
     public User getUser() {

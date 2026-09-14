@@ -36,4 +36,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    //handle campground review not found or user doesn't match
+    @ExceptionHandler(CampgroundReviewNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleCampgroundReviewNotFound(CampgroundReviewNotFoundException ex) {
+        ErrorResponseDto error = new ErrorResponseDto(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
 }

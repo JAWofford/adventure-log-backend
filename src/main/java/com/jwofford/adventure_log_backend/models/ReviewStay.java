@@ -25,6 +25,10 @@ public class ReviewStay {
     public ReviewStay() {
     }
 
+    public long getStayId() {
+        return stayId;
+    }
+
     public CampgroundReview getCampgroundReview() {
         return campgroundReview;
     }

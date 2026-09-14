@@ -95,7 +95,7 @@ public class TripLogService {
 
         tripLog.getRouteLegList().add(leg);
 
-        // saving the parent is enough — cascade = ALL persists the new RouteLeg too
+        // saving the parent is enough cascade handles the new RouteLeg too
         TripLog savedLog = tripLogRepository.save(tripLog);
         return mapToResponseDto(savedLog);
     }
