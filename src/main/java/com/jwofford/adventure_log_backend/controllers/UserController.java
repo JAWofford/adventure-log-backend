@@ -103,11 +103,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/whoami")
-        public String whoami() {
-         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        return authentication.getName();
-        }
+    @GetMapping("/auth/me")
+    public ResponseEntity<AuthResponseDto> whoami() {
+        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
+        AuthResponseDto authResponseDto = userService.getAuthResponse(authentication.getName());
+        return ResponseEntity.status(HttpStatus.OK).body(authResponseDto);
     }
+
+}
 
 

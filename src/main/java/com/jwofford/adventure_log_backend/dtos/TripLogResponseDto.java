@@ -1,52 +1,26 @@
-package com.jwofford.adventure_log_backend.models;
-
-import jakarta.persistence.*;
+package com.jwofford.adventure_log_backend.dtos;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name="trip_log")
-public class TripLog {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+public class TripLogResponseDto {
     private long tripId;
-
-    //set up relationship many trips belong to one user
-   @JoinColumn(name="user_id", nullable=false)
-   @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
-
-    @Column(nullable = false)
     private String tripName;
-    @Column(columnDefinition = "TEXT")
     private String tripDescription;
     private LocalDate startDate;
     private LocalDate endDate;
-
-    @Column(nullable = false)
     private String privacy;
+    private List<RouteLegResponseDto> routeLegs;
 
-    //set up relationship one trip log can have many route legs
-    //result always ordered by leg_order column in ascending order.
-    @OneToMany(cascade = CascadeType.ALL, mappedBy="tripLog", orphanRemoval = true)
-    @OrderBy("legOrder ASC")
-    private List<RouteLeg> routeLegList = new ArrayList<>();
-
-    public TripLog() {
+    public TripLogResponseDto() {
     }
 
     public long getTripId() {
         return tripId;
     }
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
+    public void setTripId(long tripId) {
+        this.tripId = tripId;
     }
 
     public String getTripName() {
@@ -89,11 +63,11 @@ public class TripLog {
         this.privacy = privacy;
     }
 
-    public List<RouteLeg> getRouteLegList() {
-        return routeLegList;
+    public List<RouteLegResponseDto> getRouteLegs() {
+        return routeLegs;
     }
 
-    public void setRouteLegList(List<RouteLeg> routeLegList) {
-        this.routeLegList = routeLegList;
+    public void setRouteLegs(List<RouteLegResponseDto> routeLegs) {
+        this.routeLegs = routeLegs;
     }
 }
